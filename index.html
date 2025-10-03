@@ -1,201 +1,532 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Binomial Neologism Generator</title>
-  <style>
-    body {
-      font-family: "Helvetica Neue", sans-serif;
-      background: #fafafa;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      color: #222;
-      text-align: center;
-      padding: 20px;
-    }
-    h1 { font-weight: 300; margin-bottom: 10px; }
-    #phrase {
-      font-size: 2em;
-      margin: 20px 0;
-      color: #333;
-      transition: opacity 0.4s ease;
-    }
-    #definition {
-      max-width: 600px;
-      font-style: italic;
-      color: #555;
-      height:8em;
-      min-height: 2em;
-    }
-    button {
-      padding: 10px 20px;
-      background: #000;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-    button:hover { background: #444; }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Radiohaiku</title>
+<style>
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;max-width:720px;margin:36px auto;padding:12px;color:#111}
+  h1{font-size:1.4rem;margin-bottom:.2rem}
+  p{margin:.2rem 0 1rem 0}
+  #haiku{white-space:pre; font-size:2.25rem; padding:16px; border-radius:10px; background:#f4f4f6}
+  button{margin-right:.5rem;padding:.5rem .8rem;border-radius:8px;border:1px solid #ccc;background:white;cursor:pointer}
+  small{color:#666}
+  input[type="text"]{width:100%;padding:.5rem;border-radius:6px;border:1px solid #ccc;margin-top:.5rem}
+</style>
 </head>
 <body>
+  <h1>RadioHaiku</h1>
+  <p>Miserable haikus courtesy of Radiohead</p>
 
-  <h1>Binomial Neologism Generator</h1>
-  <div id="phrase">Press the button below</div>
-  <div id="definition"></div>
-  <button id="generateBtn">Generate Binomial Neologism</button>
+  <div>
+    <button id="generateBtn">Generate haiku</button>
+    <button id="copyBtn">Copy haiku</button>
+    <button id="randomURLBtn">Share this haiku</button>
+  </div>
 
-  <script>
-    const adjectives = [
-"speculative", "performative", "distributed", "ambient", "tactical",
-"clinical", "vernacular", "posthuman", "affective", "networked", "luminous",
-"residual", "civic", "liminal", "embodied", "recursive", "algorithmic",
-"contingent", "emergent", "provisional", "entangled", 
-"situated", "procedural", "latent", "synthetic", "relational", 
-"prosthetic", "iterative", "ephemeral", "subversive", "mediated", 
-"porous", "reflexive", "dialogic", "infrastructural", "scalar", 
-"participatory", "ecological", "affectual", "transgressive", "machinic", 
-"generative", "archival", "discursive", "nomadic", "entropic", 
-"marginal", "opaque", "gestural", "precarious", "immersive", 
-"heuristic", "decolonial", "fragmentary", "modular", "anticipatory", 
-"convivial", "recombinant", "rhizomatic", "synthetic", "liminal", 
-"vernacular", "performative", "ambient", "tactical", "embodied","specular",
-"speculative-critical", "anxious", "para-ontological", "infraordinary",
-"transmaterial", "anatomical", "affordant", "cosmopolitical", "xenodesign",
-"planetary", "metabolic", "plastic", "chthonic", "feral", 
-"geological", "symbiotic", "situational", "networked", "responsive",
-"computational", "datified", "interfacial", "parametric", "algorithmic-social",
-"multimodal", "anthropocenic", "intersubjective", "mutational", "critical",
-"postdigital", "haptic", "temporal", "speculative-ethical", "translocal",
-"posthumanist", "autonomous", "adaptive", "meta-reflexive", "syntonic",
-"performative-material", "affective-technical", "onto-epistemic", "vibrant",
-"corrosive", "synthetic-organic", "hyperreal", "psychosocial", "interplanetary",
-"techno-political", "somatic", "biomorphic", "nonlinear", "empathic",
-"planetary", "post-anthropocentric", "invisible", "parasitic", "algorithmic-affective",
-"infra-sensory", "trans-scalar", "speculative-pragmatic", "algorithmic-material", 
-"hyperdimensional", "neural", "quantum", "deep", "ambient-critical"
+  <div id="haiku" aria-live="polite"></div>
 
-    ];
+<span style="display:none">
+<!--  <p><small>URL examples (either form works):</small></p>
+  <pre><code>index.html?a=OK1-1&b=OK1-5&c=OK3-2
+index.html/a=OK1-1b=OK1-5c=OK3-2</code></pre>
 
-    const nouns = [
-      "praxis", "materiality", "interface", "speculation", "infrastructure",
-"intimacy", "aesthetics", "sincerity", "ambiguity", "resonance",
-"opacity", "modularity", "ecology", "agency", "ontology",
-"assemblage", "temporality", "authenticity", "mediation", "figuration",
-"continuity", "rupture", "trace", "artifact", "gesture",
-"discourse", "affect", "subjectivity", "reciprocity", "network",
-"algorithm", "representation", "iteration", "narrative", "field",
-"relation", "contingency", "translation", "transformation", "memory",
-"presence", "absence", "archive", "collectivity", "form",
-"becoming", "embodiment", "pattern", "aura", "practice", 
-"intra-action", "infrastructure-ecology", "assemblage-thinking", "plasticity", "affordance",
-"interface-ecology", "sociomateriality", "transduction", "rhizome", "connectivity",
-"heterogeneity", "provenance", "vitality", "resilience", "threshold",
-"speculative-materiality", "interstitiality", "emergence", "topology", "ephemerality",
-"contingency-field", "multimodality", "algorithmic-practice", "cybernetics", "performative-space",
-"autonomy", "intersubjectivity", "metabolism", "chthonicity", "relationality",
-"scalarity", "nonlinearity", "hyperobject", "temporality-loop", "mutability",
-"planetarity", "hyperstructure", "prosthesis", "parametricity", "transversality",
-"affective-architecture", "mediation-layer", "digital-ontology", "networked-practice", "speculative-synthesis",
-"vibrancy", "entanglement", "synapse", "interfacing", "threshold-space",
-"parallax", "somatics", "topography", "biomorphism", "neural-network",
-"psychosociality", "deep-time", "interstice", "infraordinary", "performativity"
-    ];
+  <label>Current resolved parameters (a = 5, b = 7, c = 5):</label>-->
+  <input id="paramsView" readonly />
+</span>
 
-    const structures = ["adj-noun"];
+<script>
+// Embedded dataset (from JSON)
+const radioheadLines = {
+  five: {
+    "PH1-1": "Sun and moon and stars",
+    "PH1-2": "I could never run",
+    "PH1-3": "Why should I believe",
+    "PH1-4": "Gonna end so soon",
+    "PH1-5": "Me and everything",
+    "PH2-1": "Your skin makes me cry",
+    "PH2-2": "I don't belong here",
+    "PH2-3": "When I'm not around",
+    "PH2-4": "Whatever you want",
+    "PH3-1": "He knows what he wants",
+    "PH3-2": "He wants us to leave",
+    "PH4-2": "They won't let me be",
+    "PH4-4": "We spit on your son",
+    "PH4-5": "We spit on your face",
+    "PH4-7": "I can't find the words",
+    "PH4-8": "I have a complaint",
+    "PH5-1": "Thinking about you",
+    "PH5-2": "Your records are here",
+    "PH5-3": "But I'm still no one",
+    "PH5-4": "Should I still love you",
+    "PH5-5": "Still see you in bed",
+    "PH5-7": "All the things you got",
+    "PH5-8": "All the things you need",
+    "PH5-9": "So how can you sleep",
+    "PH5-10": "And why should you care",
+    "PH5-11": "I bled and I bleed",
+    "PH6-1": "And if London burns",
+    "PH6-2": "Standing on a beach",
+    "PH8-2": "Running out on me",
+    "PH8-3": "And I burn all hate",
+    "PH8-4": "Not a vegetable",
+    "PH9-2": "I'm better off dead",
+    "PH10-1": "Strange and creeping doubt",
+    "PH10-3": "Even though I might",
+    "PH10-4": "Even though I try",
+    "PH12-1": "Knit into my heel",
+    "PH12-2": "Killing what I feel",
+    "PH12-3": "Everything I touch",
+    "TB1-11": "Why can't you forget",
+    "TB2-2": "The words are coming",
+    "TB2-3": "Fall asleep against",
+    "TB2-5": "Baby's got the bends",
+    "TB3-1": "Two jumps in a week",
+    "TB4-2": "The fake plastic earth",
+    "TB4-8": "My fake plastic love",
+    "TB5-2": "Ground to dust and ash",
+    "TB5-3": "Crawling on all fours",
+    "TB5-5": "All the children flew",
+    "TB7-1": "Can't get the stink off",
+    "TB7-3": "Comes like a comet",
+    "TB7-6": "You and no-one else",
+    "TB8-5": "From my life support",
+    "TB8-6": "We are losing it",
+    "TB8-8": "Twentieth century bitch",
+    "TB8-9": "Just like the last one",
+    "TB10-1": "I get home from work",
+    "TB10-5": "This is killing me",
+    "TB11-1": "It eats me alive",
+    "TB11-2": "The big wall bites back",
+    "TB11-3": "You sit there and sulk",
+    "OK1-1": "In the next world war",
+    "OK1-2": "I am born again",
+    "OK1-3": "In the neon sign",
+    "OK1-4": "Scrolling up and down",
+    "OK1-7": "In a deep deep sleep",
+    "OK1-8": "Of the innocent",
+    "OK2-3": "Kicking and squealing",
+    "OK2-4": "You don't remember",
+    "OK2-6": "Off with his head, man",
+    "OK2-7": "God loves his children",
+    "OK3-1": "I keep forgetting",
+    "OK3-2": "I live in a town",
+    "OK3-3": "Aliens hover",
+    "OK3-4": "Making home movies",
+    "OK3-6": "I'd tell all my friends",
+    "OK3-7": "Lost it completely",
+    "OK4-2": "We hope that you choke",
+    "OK6-1": "This is what you get",
+    "OK7-1": "Not drinking too much",
+    "OK7-5": "A pig in a cage",
+    "OK8-2": "Somewhere we will meet",
+    "OK10-1": "Bruises that won't heal",
+    "OK12-2": "Like it's seen a ghost",
+    "OK12-3": "No one else would know",
+    "OK12-5": "That's when you see sparks",
+    "KA2-3": "We've got heads on sticks",
+    "KA4-1": "I go where I please",
+    "KA7-3": "Trapdoors that open",
+    "KA7-2": "This beautiful world",
+    "KA8-3": "Let me hear both sides",
+    "KA8-4": "Throw it in the fire",
+    "KA8-5": "Take the money run",
+    "KA9-3": "A bump on the head",
+    "KA9-4": "Where'd you park the car",
+    "KA9-5": "Cut the kids in half",
+    "KA10-3": "Cheap sex and sad films",
+    "KA14-1": "You and whose army",
+    "KA14-2": "You and your cronies",
+    "KA15-1": "And never look back",
+    "KA15-4": "There was no future",
+    "KA16-1": "I want you to know",
+    "KA16-2": "He's not coming back",
+    "KA16-3": "Look into my mouth",
+    "KA16-5": "Put him in the pot",
+    "KA22-1": "There's a little child",
+    "KA22-2": "Running round this house",
+    "KA22-3": "And he never leaves",
+    "KA23-2": "Opposite branches",
+    "KA23-4": "Then I'll come running",
+    "KA24-2": "Corner of the street",
+    "KA24-3": "Calling after me",
+    "KA24-4": "Headlights on full beam",
+    "KA24-6": "Coming after me",
+    "HT1-1": "I'll lay down the tracks",
+    "HT1-2": "There is no way out",
+    "HT1-4": "It is too late now",
+    "HT1-5": "Paying attention",
+    "HT1-6": "I get it all wrong",
+    "HT1-7": "Like flies the burgers",
+    "HT1-8": "All hail to the thief",
+    "HT2-1": "We can wipe you out",
+    "HT3-2": "But know right from wrong",
+    "HT3-3": "Sail us to the moon",
+    "HT4-2": "So you're backtracking",
+    "HT6-1": "X will mark the place",
+    "HT6-2": "Like parting the waves",
+    "HT6-3": "There'll be no more lies",
+    "HT7-1": "We want the young blood",
+    "HT7-2": "Are you fracturing",
+    "HT7-3": "Our rivers poisoned",
+    "HT7-4": "We want the sweet meats",
+    "HT8-3": "They will suck you down",
+    "HT8-4": "To the otherside",
+    "HT8-5": "This is the gloaming",
+    "HT9-1": "Waiting to happen",
+    "HT10-1": "With white elephants",
+    "HT10-2": "Little babies' eyes",
+    "HT12-1": "Holding half a head",
+    "HT12-2": "Cheering and waving",
+    "HT12-3": "Strangled beaten up",
+    "HT14-1": "Dragging out your dead",
+    "HT14-2": "Singing I miss you",
+    "HT14-3": "Out pops the cracker",
+    "HT14-4": "Smacks you in the head",
+    "HT14-5": "Knives you in the neck",
+    "HT14-6": "Kicks you in the teeth",
+    "HT14-7": "Step up get the gunge",
+    "HT14-8": "Promise to be good",
+    "HT14-9": "But he calls me up",
+    "HT14-10": "Calls me on the phone",
+    "HT14-11": "Steal all my children",
+    "IR1-5": "It comes to us all",
+    "IR2-11": "The light's gone for me",
+    "IR3-3": "You paint yourself white",
+    "IR3-4": "And feel up with noise",
+    "IR4-3": "Why should I stay here",
+    "IR4-5": "Follow where you lead",
+    "IR4-8": "If they get the chance",
+    "IR4-9": "And this is my chance",
+    "IR4-10": "I'll hit the bottom",
+    "IR5-2": "Waiting in the wings",
+    "IR5-3": "I'm an animal",
+    "IR5-4": "Trapped in your hot car",
+    "IR5-5": "I am all the days",
+    "IR5-7": "You are all I need",
+    "IR5-9": "Lying in the reeds",
+    "IR5-12": "I'm just an insect",
+    "IR6-4": "In pretty patterns",
+    "IR6-7": "It's what you feel now",
+    "IR6-9": "Dead from the neck up",
+    "IR7-5": "Dare not speak his name",
+    "IR8-1": "I don't want to be your friend",
+    "IR8-5": "Fall off the table",
+    "IR10-5": "You are my center",
+    "IR10-6": "When I spin away",
+    "IR10-10": "I'm talking to you",
+    "IR10-10": "After it's too late"
+  },
+  seven: {
+    "PH1-1": "Working out chaotic things",
+    "PH2-1": "Whatever makes you happy",
+    "PH3-1": "He's a dangerous bigot",
+    "PH3-2": "And he's just like his daddy",
+    "PH4-0": "I don't wanna hear your voice",
+    "PH4-1": "Doesn't matter anyway",
+    "PH5-1": "But I'm playing with myself",
+    "PH6-1": "I wanna be in a band",
+    "PH6-2": "Anyone can play guitar",
+    "PH7-0": "Clever toys for little boys",
+    "PH7-3": "You're free 'til you've had enough",
+    "PH7-4": "On politics and power",
+    "PH8-1": "Wanted anything but this",
+    "PH8-2": "I will not control myself",
+    "PH8-3": "I spit on the hand that feeds",
+    "PH9-1": "Back up to the cathode ray",
+    "PH10-2": "It keeps rattling my cage",
+    "PH11-1": "Tell me one thing and let it go",
+    "PH12-1": "All the time killing what I feel",
+    "TB2-2": "To hide all the dirt and pain",
+    "TB2-4": "I wish it was the sixties",
+    "TB2-5": "I wish we could be happy",
+    "TB8-2": "We're too young to fall asleep",
+    "TB10-2": "Blame it on the falling sky",
+    "TB10-3": "Blame it on the satellite",
+    "TB4-3": "She lives with a broken man",
+    "TB4-5": "But gravity always wins",
+    "TB4-6": "She looks like the real thing",
+    "TB4-7": "She tastes like the real thing",
+    "TB5-1": "I don't want to be crippled",
+    "TB7-2": "He's been hanging round for days",
+    "TB7-4": "Suckered you but not your friends",
+    "TB8-1": "Faith you're driving me away",
+    "TB9-4": "Wish that it was bullet proof",
+    "TB9-1": "Limb by limb and tooth by tooth",
+    "OK1-5":"In an interstellar burst",
+    "OK1-6":"Back to save the universe",
+    "OK1-9":"I'm amazed that I survived",
+    "OK2-1":"I'm trying to get some rest",
+    "OK2-2":"Of no consequence at all",
+    "OK2-5":"Don't you remember my name",
+    "OK3-5":"Swoop down in a country lane",
+    "OK4-1":"Before your father hears us",
+    "OK5-1":"The emptiest of feelings",
+    "OK5-2":"It's so so disappointing",
+    "OK5-3":"Let down and hanging around",
+    "OK5-4":"Crushed like a bug in the ground",
+    "OK5-5":"It always ends up drivel",
+    "OK5-6":"Hysterical and useless",
+    "OK7-2":"A patient better driver",
+    "OK7-4":"Like a cat tied to a stick",
+    "OK9-1":"I am the pick in the ice",
+    "OK9-2":"You know we're friends till we die",
+    "OK11-2":"Pull me out of the aircrash",
+    "OK11-3":"Cause I'm your superhero",
+    "OK11-4":"We are standing on the edge",
+    "OK12-4":"Sometimes I get overcharged",
+    "KA2-2": "Slipped on a little white lie",
+    "KA6-1": "You can try the best you can",
+    "KA6-3": "Dinosaurs roaming the Earth",
+    "KA8-1": "Everything all of the time",
+    "KA8-2": "Everything all of the time",
+    "KA9-2": "You can keep the furniture",
+    "KA10-2": "Help me get back to your arms",
+    "KA10-4": "Help me get where I belong",
+    "KA11-3": "As your life flashed before your eyes",
+    "KA12-0": "And we all went to heaven",
+    "KA12-1": "I jumped in the river",
+    "KA12-2": "Black-eyed angels swam with me",
+    "KA12-3": "A moon full of stars and astral cars",
+    "KA15-5": "Open up begin again",
+    "KA15-6": "Let's go down the waterfall",
+    "KA18-3": "There are weapons we can use",
+    "KA20-1": "While you make pretty speeches",
+    "KA20-3": "You feed me to the lions",
+    "HT1-1": "Walk into the jaws of hell",
+    "HT1-2": "We can wipe you out anytime",
+    "HT3-1": "Maybe you'll be president",
+    "HT6-1": "Where I end and you begin",
+    "HT6-2": "The dinosaurs roam the earth",
+    "HT6-3": "And I can't and I can't come down",
+    "HT6-4": "Where I end and where you start",
+    "HT6-5": "Where you, you left me alone",
+    "HT6-6": "I will eat you all alive",
+    "HT7-1": "Are you begging for a break",
+    "HT7-2": "Are you strung up by the wrists",
+    "HT7-3": "Won't let the creeping ivy",
+    "HT8-1": "To the shadows blue and red",
+    "HT9-1": "Waiting waiting to happen",
+    "HT11-1": "I don't know why you bother",
+    "HT11-2": "You had to piss on our parade",
+    "HT12-1": "He said I been where I liked",
+    "HT12-2": "She ate me up for breakfast",
+    "HT13-1": "Somewhere I'm not Scatterbrain",
+    "HT14-1": "If I don't pay the ransom",
+    "HT14-2": "Take it with a pinch of salt",
+    "HT8-1": "We are not the same as you",
+    "HT8-2": "Funny haha funny how",
+    "HT3-1": "Maybe you'll be president",
+    "HT4-1": "I'm teetering on the brink",
+    "HT11-1": "I don't know why you bother",
+    "IR4-2": "I get eaten by the worms",
+    "IR4-3": "Get picked over by the worms",
+    "IR5-1": "Because there are no others",
+    "IR6-4": "Duplicate and triplicate",
+    "IR7-1": "Dedicated to all you",
+    "IR9-7": "Come back and focus again",
+    "IR9-8": "You've got a cheshire cat grin",
+    "IR9-10": "This place is on a mission",
+    "IR9-15": "Words are a sawed off shotgun",
+    "IR10-1": "When I'm at the pearly gates",
+    "IR10-4": "This is one for the good days",
+    "IR7-7": "It ripples our reflections",
+    "IR6-5": "Fingers in the blackbird pie",
+    "IR6-6": "I'm tingling tingling",
+    "IR6-1": "Wakey wakey, rise and shine",
+    "IR6-3": "Watch me fall like dominos",
+    "IR5-11": "Who just wants to share your light",
+    "IR4-11": "Hit the bottom and escape",
+    "IR1-6": "It's as soft as your pillow",
+    "IR2-10": "Has the light gone out for you",
+    "IR2-12": "You can fight it like a dog",
+    "IR2-13": "And they brought me to my knees",
+    "IR10-2": "No matter what happens now",
+    "IR3-1": "Don't get any big ideas",
+    "IR3-5": "But there'll be something missing",
+    "IR3-6": "Now that you've found it, it's gone",
+    "IR3-7": "Now that you feel it, you don't"
+  }
+};
 
-    document.getElementById("generateBtn").addEventListener("click", generate);
 
-    async function generate() {
-      const structure = random(structures);
-      const adj = random(adjectives);
-      const noun = random(nouns);
-      const noun2 = random(nouns);
-
-      let phrase;
-      if (structure === "adj-noun") phrase = `${adj} ${noun}`;
-      if (structure === "noun-noun") phrase = `${noun} ${noun2}`;
-      if (structure === "noun-adj") phrase = `${noun} ${adj}`;
-
-      const phraseDiv = document.getElementById("phrase");
-      const defDiv = document.getElementById("definition");
-
-      phraseDiv.style.opacity = 0;
-      defDiv.innerText = "Thinking...";
-      
-      // Fade in new phrase
-      setTimeout(() => {
-        phraseDiv.innerText = phrase;
-        phraseDiv.style.opacity = 1;
-      }, 300);
-
-      try {
-        const definition = await getDefinition(phrase);
-        defDiv.innerText = definition;
-      } catch (err) {
-        console.error(err);
-        defDiv.innerText = makeFakeDefinition(phrase);
-      }
+// Helper: animate a single line with random flashes
+function animateLine(syllables, finalLine, lineIndex, callback){
+  const display = document.getElementById('haiku');
+  let count = 0;
+  const interval = setInterval(()=>{
+    const randomLine = resolveLine(randomKey(syllables===7 ? radioheadLines.seven : radioheadLines.five), syllables);
+    const lines = display.textContent.split('\n');
+    lines[lineIndex] = randomLine;
+    display.textContent = lines.join('\n');
+    count++;
+    if(count >= 6){ // 3 flashes ~ 1 second each
+      clearInterval(interval);
+      const linesFinal = display.textContent.split('\n');
+      linesFinal[lineIndex] = finalLine;
+      display.textContent = linesFinal.join('\n');
+      if(callback) callback();
     }
+  }, 50); // ms per flash
+}
 
-    function random(arr) {
-      return arr[Math.floor(Math.random() * arr.length)];
+
+// Helper: pick random property from an object
+function randomKey(obj){
+  const keys = Object.keys(obj);
+  return keys[Math.floor(Math.random()*keys.length)];
+}
+
+// Parse both query-string and path-like short form
+function parseParams(){
+  const params = {};
+  // query string first
+  const search = new URLSearchParams(window.location.search);
+  if(search.get('a') || search.get('b') || search.get('c')){
+    if(search.get('a')) params.a = search.get('a');
+    if(search.get('b')) params.b = search.get('b');
+    if(search.get('c')) params.c = search.get('c');
+    return params;
+  }
+  // path-like: /a=OK1-1b=OK1-5c=OK3-2
+  const path = window.location.pathname || '';
+  const parts = path.split('/').filter(Boolean);
+  if(parts.length){
+    // join last part(s)
+    const joined = parts.join('');
+    const re = /a=([A-Za-z0-9-]+)|b=([A-Za-z0-9-]+)|c=([A-Za-z0-9-]+)/g;
+    let m;
+    while((m = re.exec(joined)) !== null){
+      if(m[1]) params.a = m[1];
+      if(m[2]) params.b = m[2];
+      if(m[3]) params.c = m[3];
     }
+  }
+  // also allow hash-based params like #a=OK...
+  const hash = window.location.hash.replace(/^#/,'');
+  if(hash){
+    const pairs = new URLSearchParams(hash);
+    if(pairs.get('a')) params.a = pairs.get('a');
+    if(pairs.get('b')) params.b = pairs.get('b');
+    if(pairs.get('c')) params.c = pairs.get('c');
+  }
+  return params;
+}
 
-    // --- OPTION 1: Real OpenAI API call (requires your key) ---
-    async function getDefinition(phrase) {
-      const API_KEY = "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"; // ← Add your OpenAI API key here if you have one
-      if (!API_KEY) throw new Error("No API key provided.");
+function resolveLine(id, syllables){
+  // syllables = 5 or 7
+  if(!id) return null;
+  const store = syllables===7 ? radioheadLines.seven : radioheadLines.five;
+  return store[id] || null;
+}
 
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${API_KEY}`
-        },
-        body: JSON.stringify({
-          model: "gpt-4o-mini",
-          messages: [
-            { role: "system", content: "You are an academic design theorist who writes clear one-line definitions of nuanced concepts." },
-            { role: "user", content: `Define the concept '${phrase}', drawing on the meaning of each individual term, but alluding to something more than the sum of those parts - a synthesis that creates a resonant meaning of its own.` }
-          ],
-          temperature: 0.9,
-          max_tokens: 120
-        })
-      });
+function showResolvedParamsView(a,b,c){
+  document.getElementById('paramsView').value = `a=${a||''}  b=${b||''}  c=${c||''}`;
+}
 
-      const data = await response.json();
-      return data.choices[0].message.content.trim();
+function buildHaikuFromIDs(aID,bID,cID){
+  const a = resolveLine(aID,5);
+  const b = resolveLine(bID,7);
+  const c = resolveLine(cID,5);
+  if(a && b && c){
+    return `${a}\n${b}\n${c}`;
+  }
+  return null;
+}
+
+function generateRandomHaiku(){
+  const aID = randomKey(radioheadLines.five);
+  const bID = randomKey(radioheadLines.seven);
+  const cID = randomKey(radioheadLines.five);
+  const haiku = `${radioheadLines.five[aID]}\n${radioheadLines.seven[bID]}\n${radioheadLines.five[cID]}`;
+  showResolvedParamsView(aID,bID,cID);
+  return {haiku, ids: {a:aID,b:bID,c:cID}};
+}
+
+function render(haikuText){
+  document.getElementById('haiku').textContent = haikuText;
+}
+
+// OPTION 1
+// NON-FLASHER
+/* document.getElementById('generateBtn').addEventListener('click', ()=>{
+  const {haiku, ids} = generateRandomHaiku();
+  render(haiku);
+  // update URL (shallow) to include chosen ids as query params for sharing
+  const newUrl = `${location.pathname}?a=${ids.a}&b=${ids.b}&c=${ids.c}`;
+  history.replaceState(null,'',newUrl);
+});
+*/
+//NON-FLASHER ENDS
+
+// OPTION 2
+// FLASHER
+document.getElementById('generateBtn').addEventListener('click', ()=>{
+  const {haiku, ids} = generateRandomHaiku();
+  const [line1, line2, line3] = haiku.split('\n');
+
+  // Clear current haiku
+  render('\n\n');
+
+  // Animate each line in sequence
+  animateLine(5, line1, 0, ()=>{
+    animateLine(7, line2, 1, ()=>{
+      animateLine(5, line3, 2);
+    });
+  });
+
+  // update URL (shallow) to include chosen ids as query params for sharing
+  const newUrl = `${location.pathname}?a=${ids.a}&b=${ids.b}&c=${ids.c}`;
+  history.replaceState(null,'',newUrl);
+});
+// FLASHER ENDS
+
+
+document.getElementById('copyBtn').addEventListener('click', async ()=>{
+  const txt = document.getElementById('haiku').textContent;
+  try{
+    await navigator.clipboard.writeText(txt);
+    alert('Haiku copied to clipboard');
+  }catch(e){
+    alert('Copy failed — you can manually select and copy the text');
+  }
+});
+
+document.getElementById('randomURLBtn').addEventListener('click', ()=>{
+  const {ids} = generateRandomHaiku();
+  const share = `${location.origin}${location.pathname}?a=${ids.a}&b=${ids.b}&c=${ids.c}`;
+  prompt('Shareable URL (copy):', share);
+});
+
+// On load: if params present, try to render those; otherwise show instructions
+(function init(){
+  const p = parseParams();
+  let a = p.a || null;
+  let b = p.b || null;
+  let c = p.c || null;
+
+  // If we have explicit ids and they resolve, render those.
+  if(a && b && c){
+    const haiku = buildHaikuFromIDs(a,b,c);
+    if(haiku){
+      render(haiku);
+      showResolvedParamsView(a,b,c);
+      return;
+    } else {
+      // if invalid id(s), fall through to random
+      console.warn('One or more IDs in URL did not resolve; generating random haiku instead.');
     }
+  }
 
-    // --- OPTION 2: Local fake definition generator ---
-    function makeFakeDefinition(phrase) {
-      const openings = [
-        "The study of", "An exploration into", "A reflection on", 
-        "A meditation on", "A critique of", "The subtle tension between"
-      ];
-      const middles = [
-        "the material and the immaterial", 
-        "presence and absence", 
-        "human agency and digital automation",
-        "form and formlessness",
-        "practice and speculation",
-        "design and desire"
-      ];
-      const endings = [
-        "within contemporary creative processes.",
-        "in the context of technological culture.",
-        "as a mode of aesthetic resistance.",
-        "through emergent modes of making.",
-        "at the edges of perception and production."
-      ];
+  // If no valid params, show a random haiku on load
+  const {haiku, ids} = generateRandomHaiku();
+  render(haiku);
+  // reflect chosen ids in the readonly field and URL
+  showResolvedParamsView(ids.a, ids.b, ids.c);
+  history.replaceState(null,'', `${location.pathname}?a=${ids.a}&b=${ids.b}&c=${ids.c}`);
+})();
+</script>
 
-      return `${random(openings)} ${random(middles)} ${random(endings)}`;
-    }
-  </script>
+
 </body>
 </html>
