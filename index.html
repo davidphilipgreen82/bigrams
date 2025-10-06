@@ -190,37 +190,35 @@
       if (!API_KEY) throw new Error("No API key provided.");
       */
 
-    async function getDefinition(phrase) {
-  const response = await fetch("https://neologism-proxy.vercel.app/api/define", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ phrase })
-  });
+async function getDefinition(phrase) {
+  try {
+    const response = await fetch("https://neologism-proxy.vercel.app/api/define", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phrase })
+    });
 
-  const data = await response.json();
-  return data.choices?.[0]?.message?.content?.trim() || "No definition found.";
-}
-
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${API_KEY}`
-        },
-        body: JSON.stringify({
-          model: "gpt-4o-mini",
-          messages: [
-            { role: "system", content: "You are an academic design theorist who writes clear one-line definitions of nuanced concepts." },
-            { role: "user", content: `Define the concept '${phrase}', drawing on the meaning of each individual term, but alluding to something more than the sum of those parts - a synthesis that creates a resonant meaning of its own.` }
-          ],
-          temperature: 0.9,
-          max_tokens: 120
-        })
-      });
-
-      const data = await response.json();
-      return data.choices[0].message.content.trim();
+    // Make sure the response is valid JSON
+    if (!response.ok) {
+      console.error("Server returned status", response.status);
+      return makeFakeDefinition(phrase); // fallback local generator
     }
+
+    const data = await response.json();
+
+    // OpenAI returns the definition here
+    if (data?.choices?.[0]?.message?.content) {
+      return data.choices[0].message.content.trim();
+    } else {
+      console.warn("Unexpected response structure:", data);
+      return makeFakeDefinition(phrase); // fallback
+    }
+
+  } catch (err) {
+    console.error("Error fetching definition:", err);
+    return makeFakeDefinition(phrase); // fallback
+  }
+}
 
     // --- OPTION 2: Local fake definition generator ---
     function makeFakeDefinition(phrase) {
